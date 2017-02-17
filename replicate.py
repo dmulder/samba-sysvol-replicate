@@ -3,6 +3,7 @@ from samba import smb, getopt
 import optparse, tdb, os.path, sys, argparse
 from ConfigParser import ConfigParser
 from StringIO import StringIO
+from time import time
 
 def win_path_join(a, b):
     return '\\'.join([a, b])
@@ -22,6 +23,7 @@ def download_files(conn, remote_path, local_path):
             fname = os.path.join(local_path, f['name'])
             rname = win_path_join(remote_path, f['name'])
             open(fname, 'w').write(conn.loadfile(rname))
+            os.utime(fname, (time(), f['mtime']))
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser(description='Sysvol replication tool')
